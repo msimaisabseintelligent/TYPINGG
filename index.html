@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1e1e2e;
+            color: #ffffff;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            background: #282a36;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .word-container {
+            font-size: 24px;
+            margin: 20px;
+            font-weight: bold;
+        }
+        input {
+            font-size: 20px;
+            padding: 12px;
+            width: 80%;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            text-align: center;
+            font-weight: bold;
+            background-color: #44475a;
+            color: white;
+        }
+        .stats {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .correct {
+            color: #50fa7b;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #ff5555;
+            font-weight: bold;
+        }
+        button {
+            background-color: #bd93f9;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #50fa7b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Typing Speed Test</h1>
+        <div>
+            <button onclick="startTest(15)">15s Test</button>
+            <button onclick="startTest(30)">30s Test</button>
+        </div>
+        <div class="word-container" id="words"></div>
+        <input type="text" id="inputBox" disabled>
+        <div class="stats">
+            <p>Time Left: <span id="timer">0</span>s</p>
+            <p>WPM: <span id="wpm">0</span></p>
+        </div>
+        <button onclick="restart()">Restart</button>
+    </div>
+
+    <script>
+        const words = ["hello", "world", "champion", "typing", "king", "test", "monkey", "keyboard", "challenge", "fast", "computer", "practice", "random", "sentence", "word"];
+        let typedText = "";
+        let startTime, timerInterval, timeLeft;
+        const wordContainer = document.getElementById("words");
+        const inputBox = document.getElementById("inputBox");
+        const timerDisplay = document.getElementById("timer");
+        const wpmDisplay = document.getElementById("wpm");
+
+        function generateWords() {
+            let generatedWords = words.sort(() => Math.random() - 0.5).slice(0, 30).join(" ");
+            wordContainer.textContent = generatedWords;
+            return generatedWords;
+        }
+
+        function startTest(duration) {
+            timeLeft = duration;
+            timerDisplay.textContent = timeLeft;
+            inputBox.value = "";
+            inputBox.disabled = false;
+            inputBox.focus();
+            typedText = generateWords();
+            startTime = new Date().getTime();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    inputBox.disabled = true;
+                    calculateWPM();
+                }
+            }, 1000);
+        }
+
+        function calculateWPM() {
+            let typedWords = inputBox.value.trim().split(/\s+/).length;
+            let timeElapsed = (new Date().getTime() - startTime) / 60000;
+            let wpm = Math.round(typedWords / timeElapsed);
+            wpmDisplay.textContent = wpm;
+        }
+
+        function restart() {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = "0";
+            wpmDisplay.textContent = "0";
+            inputBox.disabled = true;
+            inputBox.value = "";
+            wordContainer.innerHTML = "";
+        }
+    </script>
+</body>
+</html>
